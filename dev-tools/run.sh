@@ -25,7 +25,7 @@ fi
 
 echo $'\n\n'
 
-python -m vehicleControl "$@"
+python -m splineParametrization "$@"
 
 if [ "$INVENV" = 0 ]; then
     echo $'\n\n'
