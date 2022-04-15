@@ -41,6 +41,18 @@ class Spline:
         print(s)
 
         # Construct matrix
+
+        for i in range(0, amountOfFunctions):
+            # use shifting blocks
+            print(i)
+            A[i][i*4:(i*4)+4] = [math.pow(x[i], 3), math.pow(x[i], 2), x[i], 1]
+            A[i+1][i*4:(i*4)+4] = [math.pow(x[i+1], 3), math.pow(x[i+1], 2), x[i+1], 1]
+
+
+        print('--------------------------------')
+        print(A)
+
+        
         
 
 

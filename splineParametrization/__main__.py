@@ -6,6 +6,9 @@ def main():
     spline = ParametricSpline()
     dataPointsX = [1, 2, 2, 3, 3, 4, 6]
     dataPointsY = [5, 6, 2, 6, 1, 5, 3]
+
+    dataPointsX = [1, 2]
+    dataPointsY = [5, 6]
     spline.setPoints(dataPointsX, dataPointsY)
 
     normalSpline = Spline()
