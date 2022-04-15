@@ -1,5 +1,5 @@
 import math
-from matplotlib.text import OffsetFrom
+import matplotlib.pyplot as plt
 import numpy as np
 
 class Spline:
@@ -12,11 +12,21 @@ class Spline:
         self.__x: list = []
         self.__y: list = []
 
+    def getSegment(self, x: float) -> int:
+        for i in range(1, len(self.__x)):
+            if x <= self.__x[i]:
+                return i
+
+        return len(self.__x)-1
+
     def calculateParameter(self, x: list, y: list) -> None:
         print("Calculating Spline Parameter...")
         # check if x and y are the same size
         assert(len(x) == len(y))
         assert(len(x) > 1)
+
+        self.__x = x
+        self.__y = y
 
         amountOfFunctions: int = len(x) - 1
         amountOfParameters: int = amountOfFunctions*4
@@ -38,8 +48,6 @@ class Spline:
             else:
                 b[2*i] = y[i]
                 b[(2*i)-1] = y[i]
-        
-        print(b)
 
         # Construct matrix
 
@@ -67,6 +75,7 @@ class Spline:
 
         print('--------------------------------')
         print(A)
+        print('--------------------------------')
 
         solution = np.linalg.solve(A, b)
         # solution to parameters
@@ -78,6 +87,13 @@ class Spline:
 
         
         
+    def plotSpline(self, amountOfPoints: int) -> None:
+        for i in range(0, len(self.__x)-1):
+            points: np.ndarray = np.linspace(self.__x[i], self.__x[i+1], amountOfPoints)
+            plt.plot(
+                points,
+                self.a[i]*points**3 + self.b[i]*points**2 + self.c[i]*points + self.d[i]
+            )
 
 
 
