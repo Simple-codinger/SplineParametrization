@@ -1,4 +1,5 @@
 import math
+from matplotlib.text import OffsetFrom
 import numpy as np
 
 class Spline:
@@ -27,30 +28,53 @@ class Spline:
         A = np.zeros((amountOfRows, amountOfParameters))
 
         # Construct solution array
-        s = np.zeros((amountOfRows, 1))
+        b = np.zeros((amountOfRows, 1))
         for i in range(0, len(y)):
             # check if it's the first or the last element
             if i == 0:
-                s[0] = y[0]
+                b[0] = y[0]
             elif i == (len(y)-1):
-                s[2*(len(y)-2)+1] = y[i]
+                b[2*(len(y)-2)+1] = y[i]
             else:
-                s[2*i] = y[i]
-                s[(2*i)-1] = y[i]
+                b[2*i] = y[i]
+                b[(2*i)-1] = y[i]
         
-        print(s)
+        print(b)
 
         # Construct matrix
 
+
+        # Interpolation at datapoints
         for i in range(0, amountOfFunctions):
             # use shifting blocks
             print(i)
-            A[i][i*4:(i*4)+4] = [math.pow(x[i], 3), math.pow(x[i], 2), x[i], 1]
-            A[i+1][i*4:(i*4)+4] = [math.pow(x[i+1], 3), math.pow(x[i+1], 2), x[i+1], 1]
+            A[2*i][i*4:(i*4)+4] = [math.pow(x[i], 3), math.pow(x[i], 2), x[i], 1]
+            A[(2*i)+1][i*4:(i*4)+4] = [math.pow(x[i+1], 3), math.pow(x[i+1], 2), x[i+1], 1]
+
+        # Continuity of functions 
+        for i in range(1, len(x)-1):
+            offset: int = 2*amountOfFunctions
+            # first order
+            A[offset + 2*(i-1)][(i-1)*4:(i*4)+4] = [3*math.pow(x[i], 2), 2*x[i], 1, 0, -3*math.pow(x[i], 2), -2*x[i], -1, 0]
+            # second order
+            A[offset + 2*(i-1)+1][(i-1)*4:(i*4)+4] = [6*x[i], 2, 0, 0, -6*x[i], -2, 0, 0]
+
+        # natural boundary condition
+        # first datapoint
+        A[amountOfRows-2][0:4] = [6*x[0], 2, 0, 0]
+        A[amountOfRows-1][amountOfParameters-4:amountOfParameters] = [6*x[len(x)-1], 2, 0, 0]
 
 
         print('--------------------------------')
         print(A)
+
+        solution = np.linalg.solve(A, b)
+        # solution to parameters
+        for i in range(0, amountOfFunctions):
+            self.a.append(solution[(i*4)])
+            self.b.append(solution[(i*4)+1])
+            self.c.append(solution[(i*4)+2])
+            self.d.append(solution[(i*4)+3])
 
         
         
